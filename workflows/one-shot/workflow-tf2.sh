@@ -16,4 +16,4 @@ export QUEUE PROJECT WALLTIME
 
 let NODES=WORKERS+1
 
-swift-t -m theta -n $NODES -e THIS $THIS/workflow.swift
+swift-t -m theta -n $NODES -e THIS $THIS/workflow-tf2.swift
