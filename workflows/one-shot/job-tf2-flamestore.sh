@@ -12,7 +12,6 @@ module load alps
 
 export MPICH_GNI_NDREG_ENTRIES=1024
 
-module swap PrgEnv-intel PrgEnv-gnu
 pdomain=flamestore
 workspace=flamestore-ws
 storagepath=/dev/shm
@@ -21,13 +20,11 @@ storagesize=1G
 apstat -P | grep ${pdomain} || apmgr pdomain -c -u ${pdomain}
 
 PROJECT_ROOT=/projects/radix-io/flamestore
-
-source $PROJECT_ROOT/spack/share/spack/setup-env.sh
-export MODULEPATH=$MODULEPATH:$PROJECT_ROOT/spack/share/spack/modules/cray-cnl6-mic_knl
+source $PROJECT_ROOT/setup.sh
+setup_flamestore_environment
+#export MODULEPATH=$MODULEPATH:$PROJECT_ROOT/spack/share/spack/modules/cray-cnl6-mic_knl
 
 set -x
-spack env activate flamestore
-spack load -r flamestore
 
 # ########################################################################
 # MASTER SERVER
@@ -58,7 +55,13 @@ sleep 30
 # CLIENT APPLICATION
 # ########################################################################
 
-aprun -cc none -n 1 -N 1 -p ${pdomain} $THIS/run-nt3-tf2-flamestore.sh
+echo "Starting a client"
+
+aprun -cc none -n 1 -N 1 -p ${pdomain} $THIS/run-nt3-tf2-flamestore.sh 0
+
+echo "Restarting a client"
+
+aprun -cc none -n 1 -N 1 -p ${pdomain} $THIS/run-nt3-tf2-flamestore.sh 1
 
 # ########################################################################
 # SHUTDOWN 

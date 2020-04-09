@@ -10,7 +10,6 @@ echo $( basename $0 )
 hostname
 
 # Modules start
-module swap PrgEnv-intel PrgEnv-gnu
 module unload cray-python/3.6.5.3
 module load   datascience/tensorflow-2.0
 # Modules end
@@ -18,12 +17,9 @@ module load   datascience/tensorflow-2.0
 which python
 export MPICH_GNI_NDREG_ENTRIES=1024
 
-source $PROJECT_ROOT/spack/share/spack/setup-env.sh
-export MODULEPATH=$MODULEPATH:$PROJECT_ROOT/spack/share/spack/modules/cray-cnl6-mic_knl
-
-spack env activate flamestore
-spack load -r flamestore
-
+source $PROJECT_ROOT/setup.sh
+setup_flamestore_environment
+#export MODULEPATH=$MODULEPATH:$PROJECT_ROOT/spack/share/spack/modules/cray-cnl6-mic_knl
 # Report original source directory
 echo THIS=$THIS
 
@@ -31,4 +27,4 @@ BENCHMARKS=$( readlink --canonicalize $THIS/../../../Benchmarks )
 NT3=$BENCHMARKS/Pilot1/NT3/nt3_baseline_keras2.py
 
 set -x
-python $NT3 --epochs 1
+python $NT3 --epochs 1 --restart ${1:-0}
